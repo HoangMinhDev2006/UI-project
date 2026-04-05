@@ -15,14 +15,11 @@ const { Header, Sider, Content } = Layout;
 
 let nextId = 4;
 
-// --- MOCK DATA ---
 const initialTableData = [
   { id: '1', pipelineName: 'User Event Ingestion', status: 'Success', records: 45000, lastRun: '2026-04-01 10:00' },
   { id: '2', pipelineName: 'Sales Data ETL', status: 'Processing', records: 12000, lastRun: '2026-04-01 14:30' },
   { id: '3', pipelineName: 'Log Aggregation', status: 'Failed', records: 0, lastRun: '2026-04-01 09:15' },
 ];
-
-// Data Volume (Nhiều đường, dao động mạnh)
 const chartData = [
   { time: '08:00', kafkaStream: 4000, sparkBatch: 2400, apiGateway: 1200 },
   { time: '10:00', kafkaStream: 3000, sparkBatch: 1398, apiGateway: 2210 },
@@ -33,7 +30,6 @@ const chartData = [
   { time: '20:00', kafkaStream: 9400, sparkBatch: 4300, apiGateway: 5100 },
 ];
 
-// Geography / Campaign Data cho BarChart
 const geoData = [
   { region: 'North America', traffic: 4000, campaigns: 24 },
   { region: 'Europe', traffic: 3000, campaigns: 13 },
@@ -42,15 +38,10 @@ const geoData = [
 ];
 
 export default function App() {
-  // States hệ thống
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  
-  // State điều hướng Menu
   const [activeTab, setActiveTab] = useState('overview');
-
-  // States dữ liệu
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [tableData, setTableData] = useState(initialTableData);
 
@@ -94,19 +85,15 @@ export default function App() {
     setIsModalVisible(false);
     reset();
   };
-
-  // Các biến Tailwind linh hoạt theo Dark/Light Mode
   const bgCard = isDarkMode ? "bg-[#141414] border-[#303030]" : "bg-white border-slate-100";
   const textHeading = isDarkMode ? "text-white" : "text-slate-700";
   const textSub = isDarkMode ? "text-gray-400" : "text-slate-500";
 
-  // === RENDER TỪNG MÀN HÌNH (ROUTING) ===
   const renderContent = () => {
     switch (activeTab) {
       case 'overview':
         return (
           <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
-            {/* Top Cards */}
             <Row gutter={[24, 24]}>
               <Col xs={24} sm={8}>
                 <Card bordered={false} className={`${isDarkMode ? 'bg-blue-900/20' : 'bg-gradient-to-br from-blue-50 to-blue-100'} shadow-sm hover:-translate-y-1 transition-all rounded-2xl border-none`}>
@@ -131,8 +118,6 @@ export default function App() {
                 </Card>
               </Col>
             </Row>
-
-            {/* Line Chart: Multi-line Data Volume */}
             <div className={`p-6 rounded-2xl shadow-sm border ${bgCard}`}>
               <h3 className={`text-lg font-bold mb-6 ${textHeading}`}>Data Ingestion Volume (Multi-source)</h3>
               <div className="h-80 w-full">
@@ -150,8 +135,6 @@ export default function App() {
                 </ResponsiveContainer>
               </div>
             </div>
-
-            {/* Geography & Campaign Stats (Bar Chart) */}
             <Row gutter={[24, 24]}>
               <Col xs={24} lg={12}>
                 <div className={`p-6 rounded-2xl shadow-sm border h-full ${bgCard}`}>
@@ -238,11 +221,9 @@ export default function App() {
   };
 
   return (
-    // Bọc toàn bộ App bằng ConfigProvider của Ant Design để đổi Theme
     <ConfigProvider theme={{ algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm }}>
       <Layout className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-[#000000]' : 'bg-[#f8fafc]'}`}>
         
-        {/* SIDEBAR */}
         <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} theme={isDarkMode ? "dark" : "light"} className="border-r border-slate-100">
           <div className="h-10 m-4 bg-gradient-to-r from-blue-600 to-blue-400 rounded-lg flex items-center justify-center text-white font-bold tracking-widest shadow-md">
             {collapsed ? 'DE' : 'DATA DE'}
@@ -250,8 +231,8 @@ export default function App() {
           <Menu 
             theme={isDarkMode ? "dark" : "light"} 
             mode="inline"
-            selectedKeys={[activeTab]} // Lắng nghe Tab đang chọn
-            onClick={(e) => setActiveTab(e.key)} // Đổi Tab khi click
+            selectedKeys={[activeTab]}
+            onClick={(e) => setActiveTab(e.key)} 
             items={[
               { key: 'overview', icon: <DashboardOutlined />, label: 'Overview' },
               { key: 'pipelines', icon: <DatabaseOutlined />, label: 'Pipelines' },
@@ -266,13 +247,11 @@ export default function App() {
         </Sider>
 
         <Layout className="bg-transparent">
-          {/* HEADER CÓ NÚT DARK MODE */}
           <Header className={`flex justify-between items-center px-6 shadow-sm z-10 ${isDarkMode ? 'bg-[#141414] border-b border-[#303030]' : 'bg-white'}`}>
             <h1 className={`text-xl font-bold m-0 ${textHeading}`}>
               {activeTab === 'overview' ? 'Analytics Dashboard' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
             </h1>
             <div className="flex items-center gap-6">
-              {/* Nút bật tắt chế độ sáng tối */}
               <div className="flex items-center gap-2">
                 <BulbOutlined className={isDarkMode ? 'text-gray-500' : 'text-yellow-500'} />
                 <Switch checked={isDarkMode} onChange={(checked) => setIsDarkMode(checked)} />
@@ -281,14 +260,10 @@ export default function App() {
               <Button danger type={isDarkMode ? "primary" : "default"} onClick={() => setIsAuthenticated(false)}>Đăng xuất</Button>
             </div>
           </Header>
-
-          {/* MAIN CONTENT THAY ĐỔI THEO TAB */}
           <Content className="m-6">
             {renderContent()}
           </Content>
         </Layout>
-
-        {/* MODAL THÊM PIPELINE */}
         <Modal title="Tạo Pipeline Mới" open={isModalVisible} onCancel={() => { setIsModalVisible(false); reset(); }} footer={null}>
           <AntForm layout="vertical" onFinish={handleSubmit(onSubmit)} className="mt-4">
             <AntForm.Item label="Tên Pipeline" validateStatus={errors.pipelineName ? "error" : ""} help={errors.pipelineName?.message}>
